@@ -1,0 +1,30 @@
+{
+  "name": "a-twitter-sentiment-analysis",
+  "version": "1.0.0",
+  "description": "This is a command line application built with Javascript nodejs, for analyzing opinions expressed by the users tweets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Munachi-Ugorji/BC-18-Twitter-Sentiment-Analysis.git"
+  },
+  "keywords": [
+    "Twitter",
+    "Sentiment",
+    "Analysis",
+    "Node.js",
+    "Javascript"
+  ],
+  "author": "Munachimso Ugorji",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Munachi-Ugorji/BC-18-Twitter-Sentiment-Analysis/issues"
+  },
+  "homepage": "https://github.com/Munachi-Ugorji/BC-18-Twitter-Sentiment-Analysis#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "twitter": "^1.7.0"
+  }
+}
