@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Munachi-Ugorji/BC-18-Twitter-Sentiment-Analysis#readme",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "jsonfile": "^2.4.0",
     "twitter": "^1.7.0"
   }
 }

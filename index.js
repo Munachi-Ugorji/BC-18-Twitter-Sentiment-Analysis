@@ -3,6 +3,9 @@ require('dotenv').config();
 //var ProgressBar = require('progress');
 
 var Twitter = require('twitter');
+var jsonfile = require('jsonfile')
+var file = 'tweets.json'
+
 var tweetList;
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -17,32 +20,20 @@ var params = {screen_name: 'munaugo'};
 
 client.get('https://api.twitter.com/1.1/statuses/user_timeline.json', params, function(error, tweets, response) {
 	if(!error) {
-		// var len = parseInt(response.headers['content-length'], 10);
- 
-  	
-  // 		var bar = new ProgressBar('  downloading [:bar] :percent :etas', {
-		//     complete: '=',
-		//     incomplete: ' ',
-		//     width: 20,
-		//     total: len
-		//   });
-
-  // 			response.on('data', function (chunk) {
-		//   	console.log(chunk, "adsd")
-		//     bar.tick(1);
-		//   });
- 
-		//   response.on('end', function () {
-		//     console.log('\n');
-		//   });
+	
 		tweet_length = tweets.length;
 		
-		for (var i=0;i<tweet_length;i++) {
+		for (var i=0; i<tweet_length; i++) {
 			var tweet = tweets[i];
 			tweetList += tweet.text + " ";
 			
 		}
-		output(tweetList) }
+		output(tweetList) 
+		var obj = {tweet: tweetList}
+
+		jsonfile.writeFile(file, obj, function (err) {
+		console.error(err)
+})}
 		else {
 			console.log('you have an error', error)
 			
@@ -52,3 +43,9 @@ client.get('https://api.twitter.com/1.1/statuses/user_timeline.json', params, fu
 function output(tweetList) {
 	console.log(tweetList)
 }
+
+var obj = {tweet: output(tweetList)}
+
+jsonfile.writeFile(file, obj, function (err) {
+	console.error(err)
+})
