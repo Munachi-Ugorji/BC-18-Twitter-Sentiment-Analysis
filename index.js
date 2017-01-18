@@ -1,7 +1,5 @@
 
 require('dotenv').config();
-//var ProgressBar = require('progress');
-
 var Twitter = require('twitter');
 var jsonfile = require('jsonfile')
 var file = 'tweets.json'
@@ -16,9 +14,8 @@ var client = new Twitter({
 
 
 var params = {screen_name: 'munaugo'};
-//client.get('http://api.twitter.com/1.1/statuses/user_timeline.json?count=2',{include_entities:false});
 
-client.get('https://api.twitter.com/1.1/statuses/user_timeline.json', params, function(error, tweets, response) {
+client.get('statuses/user_timeline', params, function(error, tweets, response) {
 	if(!error) {
 	
 		tweet_length = tweets.length;
@@ -42,24 +39,23 @@ client.get('https://api.twitter.com/1.1/statuses/user_timeline.json', params, fu
 
 function output(tweetList) {
 	console.log(tweetList)
-	tweetList = tweetList.split(/[\s\n\t\r\^#\^@\W]+/g).sort(); //sorting and spliting sentence passed into an array
+	tweetList = tweetList.replace(/[^a-zA-Z 0-9]+/g, '').split(/[\s\/]+/g).sort(); 
 	console.log(tweetList)
-    var current = null; //declaring variables
+    var current = null; 
     var count = 0;
     var json = {};
     
-    for (var index = 0; index < tweetList.length; index++) { //iterating over converted array
+    for (var index = 0; index < tweetList.length; index++) { 
        
-        if (tweetList[index] != current) { //checking the current value in loop
-            current = tweetList[index];  //if it is not null, current is set to the value
-            count = 1; //count is set as 1
+        if (tweetList[index] != current) { 
+            current = tweetList[index];  
+            count = 1; 
         } else {
-            count++; //else count will increase by one
-            json[tweetList[index]] = count; //json property is assigned its count value
+            count++; 
+            json[tweetList[index]] = count; 
         }
       
-      json[tweetList[index]] = count; //json property is assinged its count value
-
+      json[tweetList[index]] = count; 
     }
     console.log(json)
     return json;
