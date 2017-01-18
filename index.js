@@ -34,11 +34,22 @@ rl.question('Enter a twitter username...', (twHandle) => {
 	
 				tweet_length = tweets.length;
 				
+				//var ProgressBar = require('progress');
+ 
+				//var bar = new ProgressBar(':bar', { total: tweet_length });
+			
 				for (var i=0; i<tweet_length; i++) {
 					var tweet = tweets[i];
 					tweetList += tweet.text + " ";
-					
+					// bar.tick(i)
+					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
 				}
+
+				// if (bar.complete) {
+				// 	console.log('\n')
+				// }
+
+				// console.log(tweetList)
 				
 				alchemy.lookup('sentiment','text', tweet.text)
 				  .then (function (result) {
@@ -49,7 +60,7 @@ rl.question('Enter a twitter username...', (twHandle) => {
 				  });
 
 
-				output(tweetList) 
+				//output(tweetList) 
 				var obj = {tweet: tweetList}
 
 				jsonfile.writeFile(file, obj, function (err) {
@@ -65,29 +76,4 @@ rl.question('Enter a twitter username...', (twHandle) => {
 	rl.close();
 });
 
-
-function output(tweetList) {
-	console.log(tweetList)
-	tweetList = tweetList.replace(/[^a-zA-Z 0-9]+/g, '').split(/[\s\/\W]+/g).sort(); 
-	tweetList = stopwword.removeStopwords(tweetList);
-	console.log(tweetList)
-    var current = null; 
-    var count = 0;
-    var json = {};
-    
-    for (var index = 0; index < tweetList.length; index++) { 
-       
-        if (tweetList[index] != current) { 
-            current = tweetList[index];  
-            count = 1; 
-        } else {
-            count++; 
-            json[tweetList[index]] = count; 
-        }
-      
-      json[tweetList[index]] = count; 
-    }
-    console.log(json)
-    return json;
-}
 
