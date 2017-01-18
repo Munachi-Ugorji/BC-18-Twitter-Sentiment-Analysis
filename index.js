@@ -4,6 +4,7 @@ var Twitter = require('twitter');
 var jsonfile = require('jsonfile');
 var readLine = require('readline');
 var file = 'tweets.json'
+var alchemy 
 var tweetList;
 
 var client = new Twitter({
@@ -42,19 +43,19 @@ rl.question('Enter a twitter username...', (twHandle) => {
 		console.error(err)
 		})}
 		else {
-			console.log('you have an error', error)
+			console.log('OOPs, Houston we have a problem', error)
 			
 		}
 		});	
 
-	}
+	} 
 	rl.close();
 });
 
 
 function output(tweetList) {
 	console.log(tweetList)
-	tweetList = tweetList.replace(/[^a-zA-Z 0-9]+/g, '').split(/[\s\/]+/g).sort(); 
+	tweetList = tweetList.replace(/[^a-zA-Z 0-9]+/g, '').split(/[\s\/\W]+/g).sort(); 
 	console.log(tweetList)
     var current = null; 
     var count = 0;
