@@ -3,9 +3,12 @@ require('dotenv').config();
 var Twitter = require('twitter');
 var jsonfile = require('jsonfile');
 var readLine = require('readline');
-var file = 'tweets.json'
-var alchemy 
-var tweetList;
+var file = 'tweets.json';
+var promise = require('promise');
+var alchemy = require('node_alchemy')(process.env.api_key);
+var stopwword = require('stopword');
+var tweetList = [];
+
 
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -29,23 +32,33 @@ rl.question('Enter a twitter username...', (twHandle) => {
 		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(error, tweets, response){
 			if(!error) {
 	
-		tweet_length = tweets.length;
-		
-		for (var i=0; i<tweet_length; i++) {
-			var tweet = tweets[i];
-			tweetList += tweet.text + " ";
-			
-		}
-		output(tweetList) 
-		var obj = {tweet: tweetList}
+				tweet_length = tweets.length;
+				
+				for (var i=0; i<tweet_length; i++) {
+					var tweet = tweets[i];
+					tweetList += tweet.text + " ";
+					
+				}
+				
+				alchemy.lookup('sentiment','text', tweet.text)
+				  .then (function (result) {
+				  	res.json(result);
+				  })
+				  .catch(function (err) {
+				  	res.json({status: 'error', message:err});
+				  });
 
-		jsonfile.writeFile(file, obj, function (err) {
-		console.error(err)
-		})}
-		else {
-			console.log('OOPs, Houston we have a problem', error)
-			
-		}
+
+				output(tweetList) 
+				var obj = {tweet: tweetList}
+
+				jsonfile.writeFile(file, obj, function (err) {
+				console.error(err)
+				})}
+			else {
+				console.log('OOPs, Houston we have a problem', error)
+				
+			}
 		});	
 
 	} 
@@ -56,6 +69,7 @@ rl.question('Enter a twitter username...', (twHandle) => {
 function output(tweetList) {
 	console.log(tweetList)
 	tweetList = tweetList.replace(/[^a-zA-Z 0-9]+/g, '').split(/[\s\/\W]+/g).sort(); 
+	tweetList = stopwword.removeStopwords(tweetList);
 	console.log(tweetList)
     var current = null; 
     var count = 0;
