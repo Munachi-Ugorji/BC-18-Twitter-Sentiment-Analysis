@@ -42,10 +42,26 @@ client.get('https://api.twitter.com/1.1/statuses/user_timeline.json', params, fu
 
 function output(tweetList) {
 	console.log(tweetList)
+	tweetList = tweetList.split(/[\s\n\t\r\^#\^@\W]+/g).sort(); //sorting and spliting sentence passed into an array
+	console.log(tweetList)
+    var current = null; //declaring variables
+    var count = 0;
+    var json = {};
+    
+    for (var index = 0; index < tweetList.length; index++) { //iterating over converted array
+       
+        if (tweetList[index] != current) { //checking the current value in loop
+            current = tweetList[index];  //if it is not null, current is set to the value
+            count = 1; //count is set as 1
+        } else {
+            count++; //else count will increase by one
+            json[tweetList[index]] = count; //json property is assigned its count value
+        }
+      
+      json[tweetList[index]] = count; //json property is assinged its count value
+
+    }
+    console.log(json)
+    return json;
 }
 
-var obj = {tweet: output(tweetList)}
-
-jsonfile.writeFile(file, obj, function (err) {
-	console.error(err)
-})
