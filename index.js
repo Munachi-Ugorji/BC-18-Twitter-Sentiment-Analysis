@@ -1,10 +1,11 @@
 
 require('dotenv').config();
 var Twitter = require('twitter');
-var jsonfile = require('jsonfile')
+var jsonfile = require('jsonfile');
+var readLine = require('readline');
 var file = 'tweets.json'
-
 var tweetList;
+
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
   consumer_secret: process.env.consumer_secret,
@@ -13,10 +14,19 @@ var client = new Twitter({
 })
 
 
-var params = {screen_name: 'munaugo'};
+var rl = readLine.createInterface({
+	input: process.stdin,
+	output: process.stdout
+})
 
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-	if(!error) {
+rl.question('Enter a twitter username...', (twHandle) => {
+
+	if(twHandle) {
+		console.log('Verifying your twitter handle');
+		console.log('-----------------------------');
+
+		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(error, tweets, response){
+			if(!error) {
 	
 		tweet_length = tweets.length;
 		
@@ -30,12 +40,17 @@ client.get('statuses/user_timeline', params, function(error, tweets, response) {
 
 		jsonfile.writeFile(file, obj, function (err) {
 		console.error(err)
-})}
+		})}
 		else {
 			console.log('you have an error', error)
 			
 		}
-})
+		});	
+
+	}
+	rl.close();
+});
+
 
 function output(tweetList) {
 	console.log(tweetList)
