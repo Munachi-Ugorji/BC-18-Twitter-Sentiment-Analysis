@@ -2,7 +2,6 @@ require('dotenv').config();
 var Twitter = require('twitter');
 var jsonfile = require('jsonfile');
 var readLine = require('readline');
-var fs = require('fs');
 var alchemy = require('node_alchemy')(process.env.api_key);
 var wordsFrequency = require('./wordfreq');
 var file = 'tweets.json';
@@ -35,7 +34,7 @@ rl.question('Enter a twitter username...', (twHandle) => {
 				
 				tweet_length = tweets.length;
 				var tweetList = [];
-				
+
 				for (var i=0; i<tweet_length; i++) {
 					var tweet = tweets[i];
 					tweetList += tweet.text + " ";
