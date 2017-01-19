@@ -4,8 +4,6 @@ var jsonfile = require('jsonfile');
 var readLine = require('readline');
 var alchemy = require('node_alchemy')(process.env.api_key);
 var wordsFrequency = require('./wordfreq');
-var file = 'tweets.json';
-
 
 
 var client = new Twitter({
@@ -41,6 +39,7 @@ rl.question('Enter a twitter username...', (twHandle) => {
 					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
 				}
 					var obj = {tweet: tweetList}
+					var file = 'tweets.json';
 
 					jsonfile.writeFile(file, obj, function (err) {
 					console.error(err)
@@ -95,7 +94,7 @@ rl.question('Enter a twitter username...', (twHandle) => {
 										}).catch(function(error) {
 
 										})
-										promises.push(eachPromise);
+									promises.push(eachPromise);
 								}
 								Promise.all(promises).then((result) => {
 									console.log('Your sentiment cumulative is ' + sentimentSum);
