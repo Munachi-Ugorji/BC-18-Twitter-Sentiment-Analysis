@@ -1,14 +1,13 @@
-
 require('dotenv').config();
 var Twitter = require('twitter');
 var jsonfile = require('jsonfile');
 var readLine = require('readline');
-var file = 'tweets.json';
-var promise = require('promise');
+var fs = require('fs');
 var alchemy = require('node_alchemy')(process.env.api_key);
-var stopwword = require('stopword');
-var tweetList = [];
+var wordsFrequency = require('./wordfreq');
 
+// var tweetList = [];
+// var file = 'tweets.json';
 
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -21,7 +20,9 @@ var client = new Twitter({
 var rl = readLine.createInterface({
 	input: process.stdin,
 	output: process.stdout
-})
+});
+
+
 
 rl.question('Enter a twitter username...', (twHandle) => {
 
@@ -31,49 +32,98 @@ rl.question('Enter a twitter username...', (twHandle) => {
 
 		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(error, tweets, response){
 			if(!error) {
-	
-				tweet_length = tweets.length;
 				
-				//var ProgressBar = require('progress');
- 
-				//var bar = new ProgressBar(':bar', { total: tweet_length });
-			
-				for (var i=0; i<tweet_length; i++) {
-					var tweet = tweets[i];
-					tweetList += tweet.text + " ";
-					// bar.tick(i)
-					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
-				}
-
-				// if (bar.complete) {
-				// 	console.log('\n')
+				// tweet_length = tweets.length;
+				
+				// for (var i=0; i<tweet_length; i++) {
+				// 	var tweet = tweets[i];
+				// 	tweetList += tweet.text + " ";
+				// 	console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
 				// }
+				// 	var obj = {tweet: tweetList}
 
-				// console.log(tweetList)
+				// 	jsonfile.writeFile(file, obj, function (err) {
+				// 	console.error(err)
+				// 	})}
+				// else {
+				// 	console.log('OOPs, Houston we have a problem', error)
 				
-				alchemy.lookup('sentiment','text', tweet.text)
-				  .then (function (result) {
-				  	res.json(result);
-				  })
-				  .catch(function (err) {
-				  	res.json({status: 'error', message:err});
-				  });
+				rl.question('Enter 1 or 2: ', (todo)	=> {
+
+					if(todo == 1) {
+						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
+							if(!error) {
+								var tweetObj = {tweets: tweets};
+								var tweetLength = tweetObj.tweets.length;
+								var allTweet = '';
+								for (let i =0; i < tweetLength -1; i++){
+									allTweet +=  tweetObj.tweets[i].text;
+								}
+								
+								words = wordsFrequency(allTweet);
+
+								for (var key in words){
+									if(key == 5) break;
+									if (words.hasOwnProperty(key)) {
+										console.log('Word: '+ words[key].word +' <===> Frequency: '+ words[key].freq);
+									}
+								}
 
 
-				//output(tweetList) 
-				var obj = {tweet: tweetList}
+							}
+						});
+					} else if(todo = 2){
+						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
+							if (!error){
+								var tweetObj = {tweets:tweets};
+								var tweetLength = tweetObj.tweets.length;
+								var promises = [];
+								var sentimentSum = 0;
 
-				jsonfile.writeFile(file, obj, function (err) {
-				console.error(err)
-				})}
-			else {
-				console.log('OOPs, Houston we have a problem', error)
+								for (let i = 0; i < tweetLength - 1; i++){
+									eachTweet = tweetObj.tweets[i];
+
+									var params = {
+										text: eachTweet.text
+									};
+
+									var eachPromise = alchemy.lookup('sentiment', 'text', eachTweet.text)
+										.then(function(result){
+											if (result.data.docSentiment.score){
+												console.log(result.data.docSentiment.type);
+												console.log('--------------------------');
+												sentimentSum += parseFloat(result.data.docSentiment.score);
+											}
+										}).catch(function(error) {
+
+										})
+										promises.push(eachPromise);
+								}
+								Promise.all(promises).then((result) => {
+									console.log('Your sentiment cumulative is ' + sentimentSum);
+								}).catch(()=> {
+									console.log('error')
+								});
+							}
+						});
+					} else {
+						console.log('Input either 1 or 2');
+					}
+
+					rl.close();
+				});
+
 				
+			} else {
+				console.log('Is that a valid twitter handle?');
+				rl.close();
 			}
+			
 		});	
 
-	} 
-	rl.close();
+	} else {
+		rl.close();
+	}
+	
 });
-
 
