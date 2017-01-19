@@ -5,9 +5,9 @@ var readLine = require('readline');
 var fs = require('fs');
 var alchemy = require('node_alchemy')(process.env.api_key);
 var wordsFrequency = require('./wordfreq');
+var file = 'tweets.json';
 
-// var tweetList = [];
-// var file = 'tweets.json';
+
 
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -33,20 +33,19 @@ rl.question('Enter a twitter username...', (twHandle) => {
 		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(error, tweets, response){
 			if(!error) {
 				
-				// tweet_length = tweets.length;
+				tweet_length = tweets.length;
+				var tweetList = [];
 				
-				// for (var i=0; i<tweet_length; i++) {
-				// 	var tweet = tweets[i];
-				// 	tweetList += tweet.text + " ";
-				// 	console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
-				// }
-				// 	var obj = {tweet: tweetList}
+				for (var i=0; i<tweet_length; i++) {
+					var tweet = tweets[i];
+					tweetList += tweet.text + " ";
+					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
+				}
+					var obj = {tweet: tweetList}
 
-				// 	jsonfile.writeFile(file, obj, function (err) {
-				// 	console.error(err)
-				// 	})}
-				// else {
-				// 	console.log('OOPs, Houston we have a problem', error)
+					jsonfile.writeFile(file, obj, function (err) {
+					console.error(err)
+					})
 				
 				rl.question('Enter 1 or 2: ', (todo)	=> {
 
