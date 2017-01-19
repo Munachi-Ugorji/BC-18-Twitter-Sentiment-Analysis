@@ -1,10 +1,10 @@
 var sw = require('stopword');
 
 function wordFrequency(sentences) {
-    sentences = sentences.replace(/href\s*=\s*(['"])(https?:\/\/.+?)\1/ig,''); //replace all urls
-    sentences = sentences.replace(/[^\w\s]/gi, '');//remove all special characters
-    sentences = sentences.replace(/[\s\n\t\r]+/g, ' '); //convert all multi-space to single-space
-    sentences = sentences.split(' ').sort(); //sorting and spliting 
+    sentences = sentences.replace(/href\s*=\s*(['"])(https?:\/\/.+?)\1/ig,''); 
+    sentences = sentences.replace(/[^\w\s]/gi, ''); 
+    sentences = sentences.replace(/[\s\n\t\r]+/g, ' '); 
+    sentences = sentences.split(' ').sort(); 
 
     sentences = sw.removeStopwords(sentences);
 
