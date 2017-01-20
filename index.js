@@ -46,7 +46,7 @@ console.log(colors.silly('------------------------------------------------'));
 console.log('');
 console.log(colors.verbose('We analyze your tweets and inform you of the general disposition of your tweets, \nwhether positive, negative or neutral. We also give you a list of your \nmost used words on twitter. All this based on your last 25 tweets.'))
 console.log('');
-console.log(colors.verbose('\t \t You can perform Twitter \n \n 1. Word Analysis \n \n 2. Sentiment Analysis'));
+console.log(colors.verbose('\t \t You can perform these: \n \n 1. Word Analysis \n \n 2. Sentiment Analysis'));
 console.log(colors.silly('-------------------------------------------------'));
 console.log('');
 console.log(colors.bgBlue('You need a Twitter Handle e.g. "munaugo" to perform the above tasks'));
@@ -157,8 +157,15 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 											var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
 											console.log('');
 											console.log(colors.green("You're tweets show a " + sentimentType + ' disposition.'));
+											if (sentimentType = 'Positive'){
+												console.log(colors.green("Wow! that's good... Keep it up."));
+											} else if (sentimentType = 'Negative') {
+												console.log(colors.green("Well... Seems you're going to change your type of tweets."));
+											} else {
+												console.log(colors.green("Hey! You've got to stand somewhere."));
+											}
 											console.log('');
-											console.log(colors.verbose('Thank you for using this tool'));
+											console.log(colors.verbose('Thank you for using this tool.'));
 										}).catch(()=> {
 									console.log('error')
 								});
