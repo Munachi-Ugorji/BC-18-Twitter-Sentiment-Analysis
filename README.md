@@ -15,6 +15,8 @@ To run this application you need to install the following node modules
 4. readline
 5. stopword
 6. twitter
+7. cli-table
+8. colors
 
 #Required APIs
 1. You will need an ALchemy API key
