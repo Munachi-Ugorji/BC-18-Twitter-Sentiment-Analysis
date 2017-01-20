@@ -15,6 +15,8 @@ To run this application you need to install the following node modules
 4. readline
 5. stopword
 6. twitter
+7. cli-table
+8. colors
 
 #Required APIs
 1. You will need an ALchemy API key
@@ -26,6 +28,3 @@ To run this application you need to install the following node modules
 3. Install the node modules on the directory
 4. Create a .env file in the root directory and store your keys
 5. Then you app is ready to run-- use node index.js
-
-
-
