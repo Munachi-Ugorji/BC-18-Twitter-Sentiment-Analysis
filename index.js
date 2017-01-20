@@ -78,7 +78,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 					})
 				
 
-				console.log(colors.verbose('Tweets have been fetched sucessfully and stored in "tweets.json"'));
+				console.log(colors.verbose('Tweets have been fetched successfully and stored in "tweets.json"'));
 				console.log('');
 				console.log(colors.bgGreen.bold(` \t Hello ${twHandle} \t`));
 				console.log('');
@@ -102,7 +102,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 								words = wordsFrequency(allTweet);
 
 								for(var key in words){
-									if(key == 5) break;
+									if(key == 10) break;
 								    if (words.hasOwnProperty(key)) {
 								    	table.push(
 										    [words[key].word, words[key].freq]
@@ -110,7 +110,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 								    }
 					    		}
 					    		console.log('');
-								console.log(colors.verbose('WORD FREQUENCY ANALYSIS (TOP 5)'));
+								console.log(colors.verbose('WORD FREQUENCY ANALYSIS (TOP 10)'));
 								console.log('');
 					    		console.log(colors.verbose(table.toString()));
 					    		console.log('');
@@ -119,7 +119,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 
 							}
 						});
-					} else if(todo = 2){
+					} else if (todo == 2){
 
 						console.log('');
 						console.log(colors.verbose('SENTIMENT ANALYSIS'));
@@ -155,9 +155,9 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 											var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
 											console.log('');
 											console.log(colors.green("You're tweets show a " + sentimentType + ' disposition.'));
-											if (sentimentType = 'Positive'){
+											if (sentimentType == 'Positive'){
 												console.log(colors.green("Wow! that's good... Keep it up."));
-											} else if (sentimentType = 'Negative') {
+											} else if (sentimentType == 'Negative') {
 												console.log(colors.green("Well... Seems you're going to change your type of tweets."));
 											} else {
 												console.log(colors.green("Hey! You've got to stand somewhere."));
@@ -171,7 +171,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 							}
 						});
 					} else {
-						console.log('Input either 1 or 2');
+						console.log(colors.error('Input either 1 or 2'));
 					}
 
 					rl.close();
@@ -179,7 +179,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 
 				
 			} else {
-				console.log('Is that a valid twitter handle?');
+				console.log(colors.error('Is that a valid twitter handle?'));
 				rl.close();
 			}
 			
