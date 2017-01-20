@@ -41,18 +41,18 @@ var table = new Table({
 
 console.log('');
 console.log('');
-console.log(colors.help.bold('\t WELCOME TO TWITITER DATA INSIGHT'));
+console.log(colors.help.bold('\t WELCOME TO TWITITER SENTLYSIS'));
 console.log(colors.silly('------------------------------------------------'));
 console.log('');
-console.log(colors.verbose('\t \t You can perform Twitter \n \n 1. Word Analysis \n \n 2. Sentiment Analysis \n \n 3. Emotion Analysis'));
+console.log(colors.verbose('\t \t You can perform Twitter \n \n 1. Word Analysis \n \n 2. Sentiment Analysis'));
 console.log(colors.silly('-------------------------------------------------'));
 console.log('');
 
-console.log(colors.bgBlue('You need a Twitter Handle e.g. AJUdensi to perform the above tasks'));
+console.log(colors.bgBlue('You need a Twitter Handle e.g. "munaugo" to perform the above tasks'));
 console.log('');
 
 
-rl.question(colors.input('Username...: '), (twHandle) => {
+rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 
 	if(twHandle) {
 		console.log('');
@@ -68,7 +68,7 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 				for (var i=0; i<tweet_length; i++) {
 					var tweet = tweets[i];
 					tweetList += tweet.text + " ";
-					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
+					console.log(colors.verbose("fetching tweets: "+ Math.round((i+1)/tweet_length * 100).toString() + "%"))
 				}
 					var obj = {tweet: tweetList}
 					var file = 'tweets.json';
@@ -83,17 +83,12 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 				console.log('');
 				console.log(colors.silly('----------------------------'));
 				console.log('');
-				console.log(colors.verbose('Choose a task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis \n \n 3 => Emotion Analysis'));
+				console.log(colors.verbose('Choose a task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis'));
 				console.log('');
 
 				rl.question(colors.input('Enter 1 or 2: '), (todo)	=> {
 
 					if(todo == 1) {
-						console.log("...........");
-						console.log('Most used words');
-						console.log("--------------");
-						console.log("one most used word coming up");
-						console.log("--------------");
 						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
 							if(!error) {
 								var tweetObj = {tweets: tweets};
@@ -114,7 +109,9 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 								       //console.log(colors.verbose(`Word: ${words[key].word} <===> Frequency: ${words[key].freq}`));
 								    }
 					    		}
-
+					    		console.log('');
+								console.log(colors.verbose('WORD Frequency ANALYSIS'));
+								console.log('');
 					    		console.log(colors.verbose(table.toString()));
 
 
@@ -122,7 +119,7 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 						});
 					} else if(todo = 2){
 						console.log('');
-						console.log('performing a sentiment analysis');
+						console.log(colors.verbose('SENTIMENT ANALYSIS'));
 						console.log('');
 
 						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
@@ -156,7 +153,7 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 											console.log(colors.green(twHandle + ' your sentiment cumulative is ' + sentimentSum));
 											var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
 											console.log('');
-											console.log(colors.green(`I think you are generally ${sentimentType}`));
+											console.log(colors.green("You're tweets show a " + sentimentType + 'disposition.'));
 											console.log('');
 										}).catch(()=> {
 									console.log('error')
