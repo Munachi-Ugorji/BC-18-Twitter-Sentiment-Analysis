@@ -78,7 +78,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 					})
 				
 
-				console.log(colors.verbose('Tweets have been fetched sucessfully'));
+				console.log(colors.verbose('Tweets have been fetched sucessfully and stored in "tweets.json"'));
 				console.log('');
 				console.log(colors.bgGreen.bold(` \t Hello ${twHandle} \t`));
 				console.log('');
