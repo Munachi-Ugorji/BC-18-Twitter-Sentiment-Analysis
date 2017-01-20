@@ -1,12 +1,17 @@
 require('dotenv').config();
 var Twitter = require('twitter');
-var jsonfile = require('jsonfile');
 var readLine = require('readline');
-var alchemy = require('node_alchemy')(process.env.api_key);
+var fs = require('fs');
 var wordsFrequency = require('./wordfreq');
 var colors = require('colors');
 var Table = require('cli-table');
 
+var alchemy = require('node_alchemy')(process.env.api_key /*'612be5e9d82c63b648661079c636abbfc7c6f0db'*/);
+
+var watson = require('watson-developer-cloud');
+var alchemy_language = watson.alchemy_language({
+  api_key: process.env.api_key //'612be5e9d82c63b648661079c636abbfc7c6f0db'
+});
 
 var client = new Twitter({
   consumer_key: process.env.consumer_key,
@@ -15,10 +20,9 @@ var client = new Twitter({
   access_token_secret: process.env.access_token_secret
 })
 
-
-var rl = readLine.createInterface({
-	input: process.stdin,
-	output: process.stdout
+const rl = readLine.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
 colors.setTheme({
@@ -39,6 +43,7 @@ var table = new Table({
     colWidths: [30, 20]
 });
 
+
 console.log('');
 console.log('');
 console.log(colors.help.bold('\t WELCOME TO TWITITER DATA INSIGHT'));
@@ -50,34 +55,17 @@ console.log('');
 
 console.log(colors.bgBlue('You need a Twitter Handle e.g. AJUdensi to perform the above tasks'));
 console.log('');
-
-
-rl.question(colors.input('Username...: '), (twHandle) => {
+rl.question(colors.input('Enter a twitter handle: '), (twHandle) => {
 
 	if(twHandle) {
 		console.log('');
 		console.log(colors.bgBlue('Verifying your twitter handle'));
 		console.log(colors.silly('-----------------------------'));
 
-		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(error, tweets, response){
-			if(!error) {
-				
-				tweet_length = tweets.length;
-				var tweetList = [];
+		client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(err, tweets, res){
 
-				for (var i=0; i<tweet_length; i++) {
-					var tweet = tweets[i];
-					tweetList += tweet.text + " ";
-					console.log("Process="+ Math.round((i+1)/tweet_length * 100).toString() + "%")
-				}
-					var obj = {tweet: tweetList}
-					var file = 'tweets.json';
 
-					jsonfile.writeFile(file, obj, function (err) {
-					})
-				
-
-				console.log(colors.verbose('Tweets have been fetched sucessfully'));
+			if(!err){
 				console.log('');
 				console.log(colors.bgGreen.bold(` \t Hello ${twHandle} \t`));
 				console.log('');
@@ -85,24 +73,20 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 				console.log('');
 				console.log(colors.verbose('Choose a task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis \n \n 3 => Emotion Analysis'));
 				console.log('');
-
-				rl.question(colors.input('Enter 1 or 2: '), (todo)	=> {
-
-					if(todo == 1) {
-						console.log("...........");
-						console.log('Most used words');
-						console.log("--------------");
-						console.log("one most used word coming up");
-						console.log("--------------");
-						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
-							if(!error) {
-								var tweetObj = {tweets: tweets};
-								var tweetLength = tweetObj.tweets.length;
+				
+				rl.question(colors.input('Enter 1 or 2 or 3: '), (toDo) => {
+					
+					if(toDo == 1){
+						client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(err, tweets, res){
+							if(!err){
+								var twObj = {tweets: tweets};
+								var twLength =twObj.tweets.length;
 								var allTweet = '';
-								for (let i =0; i < tweetLength -1; i++){
-									allTweet +=  tweetObj.tweets[i].text;
+								//do word frequency
+								for(let i = 0; i < twObj.tweets.length - 1; i++){
+									 allTweet += twObj.tweets[i].text;
 								}
-								
+
 								words = wordsFrequency(allTweet);
 
 								for(var key in words){
@@ -116,72 +100,80 @@ rl.question(colors.input('Username...: '), (twHandle) => {
 					    		}
 
 					    		console.log(colors.verbose(table.toString()));
+					    	}
+					    });
 
-
-							}
-						});
-					} else if(todo = 2){
-						console.log('');
-						console.log('performing a sentiment analysis');
-						console.log('');
-
-						client.get('statuses/user_timeline', {screen_name: twHandle, count:15}, function(error, tweets, response){
-							if (!error){
-								var tweetObj = {tweets:tweets};
-								var tweetLength = tweetObj.tweets.length;
+					} else if(toDo == 2){
+						client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(err, tweets, res){
+							if(!err){
+								var twObj = {tweets: tweets};
+								var twLength =twObj.tweets.length;
 								var promises = [];
 								var sentimentSum = 0;
-
-								for (let i = 0; i < tweetLength - 1; i++){
-									eachTweet = tweetObj.tweets[i];
-
-									var params = {
-										text: eachTweet.text
-									};
+						//do sentiment
+								for(let i = 0; i < twLength - 1; i++){
+									eachTweet = twObj.tweets[i];		
 
 									var eachPromise = alchemy.lookup('sentiment', 'text', eachTweet.text)
-										.then(function(result){
-											if (result.data.docSentiment.score){
-												// console.log(result.data.docSentiment.type);
-												// console.log('--------------------------');
-												sentimentSum += parseFloat(result.data.docSentiment.score);
-											}
-										}).catch(function(error) {
-
-										})
+					                    .then(function(result) {
+					                    	if(result.data.docSentiment.score){
+					                    		//console.log(result.data.docSentiment.type);
+					                    		//console.log('---------------------------')
+					                        	sentimentSum += parseFloat(result.data.docSentiment.score);
+					                        }
+					                    }).catch(function(err) {
+					                        //console.log({ status: 'error', message: err });
+					                    })
 									promises.push(eachPromise);
 								}
+								
 								Promise.all(promises).then((result) => {
 											console.log('');
-											console.log(colors.green(twHandle + ' your sentiment cumulative is ' + sentimentSum));
+											console.log(colors.green(`${twHandle} sentiment cumulative is ${sentimentSum}`));
 											var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
 											console.log('');
 											console.log(colors.green(`I think you are generally ${sentimentType}`));
 											console.log('');
-										}).catch(()=> {
-									console.log('error')
-								});
+										}).catch(()=>{
+											console.log(colors.bgRed("error"));
+										});
+							}
+						});
+					} else if(toDo == 3){
+						client.get('statuses/user_timeline', {screen_name: twHandle, count: 15}, function(err, tweets, res){
+							if(!err){
+								var twObj = {tweets: tweets};
+
+								for(let i = 0; i < twObj.tweets.length - 1; i++){
+									eachTweet = twObj.tweets[i];
+
+									alchemy_language.emotion({text: eachTweet.text}, function (err, response) {
+									  if (err)
+									    console.log(colors.bgRed('error:', err));
+									  else
+									    console.log(colors.green(response.docEmotions));
+									});
+								}
+								
+
 								
 							}
 						});
-					} else {
-						console.log('Input either 1 or 2');
-					}
 
+					} else {
+						console.log(colors.bgRed('Please try again with a valid task command'));
+					}
+					
 					rl.close();
 				});
-
-				
+			
 			} else {
-				console.log('Is that a valid twitter handle?');
+				console.log(colors.bgRed('An error occurred. Enter a valid twitter handle or check network connection '));
 				rl.close();
 			}
-			
-		});	
-
+		});
+		
 	} else {
 		rl.close();
 	}
-	
 });
-

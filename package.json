@@ -1,5 +1,5 @@
 {
-  "name": "a-twitter-sentiment-analysis",
+  "name": "Twitter Sentlysis",
   "version": "1.0.0",
   "description": "This is a command line application built with Javascript nodejs, for analyzing opinions expressed by the users tweets",
   "main": "index.js",
@@ -24,6 +24,8 @@
   },
   "homepage": "https://github.com/Munachi-Ugorji/BC-18-Twitter-Sentiment-Analysis#readme",
   "dependencies": {
+    "cli-table": "^0.3.1",
+    "colors": "^1.1.2",
     "dotenv": "^4.0.0",
     "jsonfile": "^2.4.0",
     "node_alchemy": "^0.5.4",
