@@ -1,5 +1,5 @@
 {
-  "name": "Twitter Sentlysis",
+  "name": "Twitter Sentliysis",
   "version": "1.0.0",
   "description": "This is a command line application built with Javascript nodejs, for analyzing opinions expressed by the users tweets",
   "main": "index.js",

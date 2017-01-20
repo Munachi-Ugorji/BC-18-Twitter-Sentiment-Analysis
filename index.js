@@ -41,7 +41,7 @@ var table = new Table({
 
 console.log('');
 console.log('');
-console.log(colors.help.bold('\t WELCOME TO TWITTER SENTLYSIS'));
+console.log(colors.help.bold('\t WELCOME TO TWITTER SENTILYSIS'));
 console.log(colors.silly('------------------------------------------------'));
 console.log('');
 console.log(colors.verbose('We analyze your tweets and inform you of the general disposition of your tweets, \nwhether positive, negative or neutral. We also give you a list of your \nmost used words on twitter. All this based on your last 25 tweets.'))
@@ -142,8 +142,6 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 									var eachPromise = alchemy.lookup('sentiment', 'text', eachTweet.text)
 										.then(function(result){
 											if (result.data.docSentiment.score){
-												// console.log(result.data.docSentiment.type);
-												// console.log('--------------------------');
 												sentimentSum += parseFloat(result.data.docSentiment.score);
 											}
 										}).catch(function(error) {

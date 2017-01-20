@@ -1,4 +1,7 @@
 # BC-18-Twitter-Sentiment-Analysis
+
+TWITTER SENTILYSIS
+
 A twitter sentiment analysis app on command line built with Javascript nodejs
 
 # What does it do
