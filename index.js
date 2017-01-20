@@ -110,7 +110,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 								    }
 					    		}
 					    		console.log('');
-								console.log(colors.verbose('WORD FREQUENCY ANALYSIS'));
+								console.log(colors.verbose('WORD FREQUENCY ANALYSIS (TOP 5)'));
 								console.log('');
 					    		console.log(colors.verbose(table.toString()));
 					    		console.log('');
