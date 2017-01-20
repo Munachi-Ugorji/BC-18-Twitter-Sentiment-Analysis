@@ -41,14 +41,14 @@ var table = new Table({
 
 console.log('');
 console.log('');
-console.log(colors.help.bold('\t WELCOME TO TWITITER SENTLYSIS'));
+console.log(colors.help.bold('\t WELCOME TO TWITTER SENTLYSIS'));
 console.log(colors.silly('------------------------------------------------'));
 console.log('');
-console.log(colors.verbose('We analyze your tweets and inform you of the general disposition of your tweets, \nwhether positive, negative or neutral. We also give you a list of your \nmost used words on twitter.All this based on your last 25 tweets.'))
+console.log(colors.verbose('We analyze your tweets and inform you of the general disposition of your tweets, \nwhether positive, negative or neutral. We also give you a list of your \nmost used words on twitter. All this based on your last 25 tweets.'))
+console.log('');
 console.log(colors.verbose('\t \t You can perform Twitter \n \n 1. Word Analysis \n \n 2. Sentiment Analysis'));
 console.log(colors.silly('-------------------------------------------------'));
 console.log('');
-
 console.log(colors.bgBlue('You need a Twitter Handle e.g. "munaugo" to perform the above tasks'));
 console.log('');
 
@@ -84,7 +84,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 				console.log('');
 				console.log(colors.silly('----------------------------'));
 				console.log('');
-				console.log(colors.verbose('Choose a task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis'));
+				console.log(colors.verbose('Choose the task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis'));
 				console.log('');
 
 				rl.question(colors.input('Enter 1 or 2: '), (todo)	=> {
@@ -110,9 +110,11 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 								    }
 					    		}
 					    		console.log('');
-								console.log(colors.verbose('WORD Frequency ANALYSIS'));
+								console.log(colors.verbose('WORD FREQUENCY ANALYSIS'));
 								console.log('');
 					    		console.log(colors.verbose(table.toString()));
+					    		console.log('');
+					    		console.log(colors.verbose('Thank you for using this tool'));
 
 
 							}
@@ -156,6 +158,7 @@ rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 											console.log('');
 											console.log(colors.green("You're tweets show a " + sentimentType + ' disposition.'));
 											console.log('');
+											console.log(colors.verbose('Thank you for using this tool'));
 										}).catch(()=> {
 									console.log('error')
 								});
