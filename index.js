@@ -53,141 +53,211 @@ console.log(colors.bgBlue('You need a Twitter Handle e.g. "munaugo" to perform t
 console.log('');
 
 
-rl.question(colors.input('Enter a twitter handle...: '), (twHandle) => {
 
-	if(twHandle) {
-		console.log('');
-		console.log(colors.bgBlue('Verifying your twitter handle'));
-		console.log(colors.silly('-----------------------------'));
+var loopBackCall = function() {
 
-		client.get('statuses/user_timeline', {screen_name: twHandle, count: 25}, function(error, tweets, response){
-			if(!error) {
-				
-				tweet_length = tweets.length;
-				var tweetList = [];
+	console.log('')
+	rl.question(colors.input('Enter a twitter handle...: '), function (twHandle) {
 
-				for (var i=0; i<tweet_length; i++) {
-					var tweet = tweets[i];
-					tweetList += tweet.text + " ";
-					console.log(colors.verbose("fetching tweets: "+ Math.round((i+1)/tweet_length * 100).toString() + "%"))
-				}
-					var obj = {tweet: tweetList}
-					var file = 'tweets.json';
+		if(twHandle) {
+			console.log('');
+			console.log(colors.bgBlue('Verifying your twitter handle'));
+			console.log(colors.silly('-----------------------------'));
 
-					jsonfile.writeFile(file, obj, function (err) {
-					})
-				
+			client.get('statuses/user_timeline', {screen_name: twHandle, count: 25}, function(error, tweets, response){
+				if(!error) {
+					
+					tweet_length = tweets.length;
+					var tweetList = [];
 
-				console.log(colors.verbose('Tweets have been fetched successfully and stored in "tweets.json"'));
-				console.log('');
-				console.log(colors.bgGreen.bold(` \t Hello ${twHandle} \t`));
-				console.log('');
-				console.log(colors.silly('----------------------------'));
-				console.log('');
-				console.log(colors.verbose('Choose the task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis'));
-				console.log('');
-
-				rl.question(colors.input('Enter 1 or 2: '), (todo)	=> {
-
-					if(todo == 1) {
-						client.get('statuses/user_timeline', {screen_name: twHandle, count: 25 }, function(error, tweets, response){
-							if(!error) {
-								var tweetObj = {tweets: tweets};
-								var tweetLength = tweetObj.tweets.length;
-								var allTweet = '';
-								for (let i =0; i < tweetLength -1; i++){
-									allTweet +=  tweetObj.tweets[i].text;
-								}
-								
-								words = wordsFrequency(allTweet);
-
-								for(var key in words){
-									if(key == 10) break;
-								    if (words.hasOwnProperty(key)) {
-								    	table.push(
-										    [words[key].word, words[key].freq]
-										);
-								    }
-					    		}
-					    		console.log('');
-								console.log(colors.verbose('WORD FREQUENCY ANALYSIS (TOP 10)'));
-								console.log('');
-					    		console.log(colors.verbose(table.toString()));
-					    		console.log('');
-					    		console.log(colors.verbose('Thank you for using this tool'));
-
-
-							}
-						});
-					} else if (todo == 2){
-
-						console.log('');
-						console.log(colors.verbose('SENTIMENT ANALYSIS'));
-						console.log('');
-
-						client.get('statuses/user_timeline', {screen_name: twHandle, count: 25}, function(error, tweets, response){
-							if (!error){
-								var tweetObj = {tweets:tweets};
-								var tweetLength = tweetObj.tweets.length;
-								var promises = [];
-								var sentimentSum = 0;
-
-								for (let i = 0; i < tweetLength - 1; i++){
-									eachTweet = tweetObj.tweets[i];
-
-									var params = {
-										text: eachTweet.text
-									};
-
-									var eachPromise = alchemy.lookup('sentiment', 'text', eachTweet.text)
-										.then(function(result){
-											if (result.data.docSentiment.score){
-												sentimentSum += parseFloat(result.data.docSentiment.score);
-											}
-										}).catch(function(error) {
-
-										})
-									promises.push(eachPromise);
-								}
-								Promise.all(promises).then((result) => {
-											console.log('');
-											console.log(colors.green(twHandle + ' your sentiment cumulative is ' + sentimentSum));
-											var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
-											console.log('');
-											console.log(colors.green("You're tweets show a " + sentimentType + ' disposition.'));
-											if (sentimentType == 'Positive'){
-												console.log(colors.green("Wow! that's good... Keep it up."));
-											} else if (sentimentType == 'Negative') {
-												console.log(colors.green("Well... Seems you're going to change your type of tweets."));
-											} else {
-												console.log(colors.green("Hey! You've got to stand somewhere."));
-											}
-											console.log('');
-											console.log(colors.verbose('Thank you for using this tool.'));
-										}).catch(()=> {
-									console.log('error')
-								});
-								
-							}
-						});
-					} else {
-						console.log(colors.error('Input either 1 or 2'));
+					for (var i=0; i<tweet_length; i++) {
+						var tweet = tweets[i];
+						tweetList += tweet.text + " ";
+						console.log(colors.verbose("fetching tweets: "+ Math.round((i+1)/tweet_length * 100).toString() + "%"))
 					}
+						var obj = {tweet: tweetList}
+						var file = 'tweets.json';
 
-					rl.close();
-				});
+						jsonfile.writeFile(file, obj, function (err) {
+						})
+					
 
+					console.log(colors.verbose('Tweets have been fetched successfully and stored in "tweets.json"'));
+					console.log('');
+					chooseInput();
+
+					function chooseInput () {
+						console.log('');
+						console.log(colors.bgGreen.bold(' \t Hello ' + (twHandle) + ' \t'));
+						console.log('');
+						console.log(colors.silly('----------------------------'));
+						console.log('');
+						console.log(colors.verbose('Choose the task you want to do. \n \n 1 => Word Frequency Analysis \n \n 2 => Sentiment Analysis'));
+						console.log('');
+						rl.question(colors.input('Enter 1 or 2: '), (todo)	=> {
+
+							if (todo == 1) {
+								wordFunction();
+							} else if (todo == 2){
+								sentimentAnalysis();
+							} else {
+								console.log(colors.error('You have to input either 1 or 2'));
+								console.log('');
+								chooseInput();
+							}
+
+							function wordFunction() {
+								client.get('statuses/user_timeline', {screen_name: twHandle, count: 25 }, function(error, tweets, response){
+									if(!error) {
+										var tweetObj = {tweets: tweets};
+										var tweetLength = tweetObj.tweets.length;
+										var allTweet = '';
+										for (let i =0; i < tweetLength -1; i++){
+											allTweet +=  tweetObj.tweets[i].text;
+										}
+										
+										words = wordsFrequency(allTweet);
+
+										for(var key in words){
+											if(key == 10) break;
+										    if (words.hasOwnProperty(key)) {
+										    	table.push(
+												    [words[key].word, words[key].freq]
+												);
+										    }
+							    		}
+							    		console.log('');
+										console.log(colors.verbose('WORD FREQUENCY ANALYSIS (TOP 10)'));
+										console.log('');
+							    		console.log(colors.verbose(table.toString()));
+							    		console.log('');
+							    		console.log(colors.verbose('Thank you for using this tool'));
+							    		console.log('');
+							    		lastChoice();
+
+
+							    		function lastChoice() {
+							    			console.log(colors.bgGreen.bold(' \t Hello ' + (twHandle) + ' \t'));
+											console.log('');
+											console.log(colors.silly('----------------------------'));
+											console.log('');
+							    			console.log(colors.verbose('What would you like to do next: \n1. Start again with a new twitter handle \n2. Check for Word Frequency Analysis or Sentiment Analysis again \n3. Or press Ctrl C to exit the app'));
+							    			console.log('');
+							    			rl.question(colors.input('Enter 1 or 2... '), (choose) => {
+							    			if (choose == 1){
+												loopBackCall();
+							    			} else if (choose == 2){
+							    				chooseInput();
+							    			} else {
+							    				console.log(colors.error('That is not a valid option... '));
+							    				lastChoice();
+							    			}
+							    		});
+							    		}
+							    		
+
+										
+
+									}
+								}); 
+								
+							} 
+
+							function sentimentAnalysis() {
+
+								console.log('');
+								
+
+								client.get('statuses/user_timeline', {screen_name: twHandle, count: 25}, function(error, tweets, response){
+									if (!error){
+										var tweetObj = {tweets:tweets};
+										var tweetLength = tweetObj.tweets.length;
+										var promises = [];
+										var sentimentSum = 0;
+
+										for (let i = 0; i < tweetLength - 1; i++){
+											eachTweet = tweetObj.tweets[i];
+
+											var params = {
+												text: eachTweet.text
+											};
+
+											var eachPromise = alchemy.lookup('sentiment', 'text', eachTweet.text)
+												.then(function(result){
+													if (result.data.docSentiment.score){
+														sentimentSum += parseFloat(result.data.docSentiment.score);
+													}
+												}).catch(function(error) {
+
+												})
+											promises.push(eachPromise);
+										}
+										Promise.all(promises).then((result) => {
+													console.log('');				
+													console.log(colors.verbose('SENTIMENT ANALYSIS'));
+													console.log('');
+													console.log(colors.green(twHandle + ' your sentiment cumulative is ' + sentimentSum));
+													var sentimentType = ((sentimentSum > 0) ? 'Positive' : ((sentimentSum < 0) ? 'Negative' : 'Neutal'));
+													console.log('');
+													console.log(colors.green("You're tweets show a " + sentimentType + ' disposition.'));
+													if (sentimentType == 'Positive'){
+														console.log(colors.green("Wow! that's good... Keep it up."));
+													} else if (sentimentType == 'Negative') {
+														console.log(colors.green("Well... Seems you're going to have to change your type of tweets."));
+													} else {
+														console.log(colors.green("Hey! You've got to stand somewhere."));
+													}
+													console.log('');
+													console.log(colors.verbose('Thank you for using this tool.'));
+													console.log('');
+													lastChoice();
+
+
+										    		function lastChoice() {
+										    			console.log(colors.bgGreen.bold(' \t Hello ' + (twHandle) + ' \t'));
+														console.log('');
+														console.log(colors.silly('----------------------------'));
+														console.log('');
+										    			console.log(colors.verbose('What would you like to do next: \n1. Start again with a new twitter handle \n2. Check for Word Frequency Analysis or Sentiment Analysis again \n3. Or press Ctrl C to exit the app'));
+										    			console.log('');
+										    			rl.question(colors.input('Enter 1 or 2... '), (choose) => {
+										    			if (choose == 1){
+															loopBackCall();
+										    			} else if (choose == 2){
+										    				chooseInput();
+										    			} else {
+										    				console.log(colors.error('That is not a valid option... '));
+										    				lastChoice();
+										    			}
+										    		});
+										    		}
+
+												}).catch(()=> {
+											console.log('error')
+										});
+										
+									}
+
+								});
+							} 
+							
+						});
+
+					}
+					
+
+					
+				} else {
+					console.log(colors.error('Seems that is not a valid twitter handle.'));
+					loopBackCall();
+				}
 				
-			} else {
-				console.log(colors.error('Is that a valid twitter handle?'));
-				rl.close();
-			}
-			
-		});	
+			});	
 
-	} else {
-		rl.close();
-	}
-	
-});
+		} 		
+	});
+
+};
+
+loopBackCall();
 
